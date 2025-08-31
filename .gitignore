@@ -1,3 +1,4 @@
+@"
 # Python
 __pycache__/
 *.py[cod]
@@ -15,3 +16,5 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+"@ | Out-File -Encoding UTF8 .gitignore
+
