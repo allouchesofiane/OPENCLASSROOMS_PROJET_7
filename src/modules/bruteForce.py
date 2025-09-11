@@ -2,59 +2,48 @@ from itertools import product
 
 class BruteForce:
     """
-    Algorithme brute force pour trouver la meilleure combinaison d'actions
-    avec une contrainte de budget.
+    Algorithme  Force brute 
+    Retourne (summary, picks_dict, cost_dict).
     """
 
-    def __init__(self, names, prices, benefices_pct, budget):
-        self.names = names                
-        self.prices = prices              
-        self.benefices_pct = benefices_pct
-        self.budget = budget           
+    def __init__(self, names, prices, pcts, budget):
+        self.names = names
+        self.prices = prices
+        self.pcts = pcts
+        self.budget = float(budget)
 
     def solve(self):
         n = len(self.prices)
+        best_profit = 0.0
+        best_cost = 0.0
+        best_combo = None
 
-        meilleur_profit = 0.0
-        meilleur_cout = 0.0
-        # tuple
-        meilleure_combinaison = None  
-
-        # Génère toutes les combinaisons possibles 
-        for combinaison in product((0, 1), repeat=n):
-            
-            # Coût total de la combinaison
-            cout_total = sum(
-                prix for prendre, prix in zip(combinaison, self.prices) if prendre
-            )
-
-            # Si le coût dépasse le budget, on passe 
-            if cout_total > self.budget:
+        for combo in product((0, 1), repeat=n):
+            # coût
+            cost = 0.0
+            for take, price in zip(combo, self.prices):
+                if take:
+                    cost += price
+            if cost > self.budget:
                 continue
 
-            # Profit total  
-            profit_total = sum(
-                prix * benef / 100
-                for prendre, prix, benef in zip(combinaison, self.prices, self.benefices_pct)
-                if prendre
-            )
+            # profit
+            profit = 0.0
+            for take, price, pct in zip(combo, self.prices, self.pcts):
+                if take:
+                    profit += price * pct / 100.0
 
-            # Si ce profit est meilleur, on garde cette combinaison
-            if profit_total > meilleur_profit:
-                meilleur_profit = profit_total
-                meilleur_cout = cout_total
-                meilleure_combinaison = combinaison
+            if profit > best_profit:
+                best_profit = profit
+                best_cost = cost
+                best_combo = combo
 
-        # Dictionnaire des actions achetées
-        actions_achetees = {}
-        if meilleure_combinaison is not None:
-            for prendre, nom in zip(meilleure_combinaison, self.names):
-                if prendre:
-                    actions_achetees[nom] = 1
-        
-        # Résultat 
-        return (
-            {"Total Profit": round(meilleur_profit, 2)},
-            actions_achetees,
-            {"Best cost": round(meilleur_cout, 2)},
-        )
+        picks = {}
+        if best_combo is not None:
+            for take, name in zip(best_combo, self.names):
+                if take:
+                    picks[name] = 1
+
+        summary = {"Total Profit": round(best_profit, 2)}
+        cost    = {"Best cost": round(best_cost, 2)}
+        return summary, picks, cost

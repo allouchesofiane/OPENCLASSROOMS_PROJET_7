@@ -1,0 +1,52 @@
+ALGORITHME Optimise  
+ENTRÉE:
+    names[] ← liste des noms d'actions
+    prices[] ← liste des prix des actions
+    pcts[] ← liste des pourcentages de rendement  
+    budget ← budget maximum disponible
+
+VARIABLES:
+    actions[] ← liste de tuples
+    budget ← budget
+    cout_total ← 0.0
+    profit_total ← 0.0
+    actions_selectionnees ← dictionnaire
+
+DÉBUT:
+    // 1. PRÉPARATION : Créer la liste d'actions avec profits en euros
+    POUR i DE 0 À longueur(names) - 1:
+        nom ← names[i]
+        prix ← prices[i] 
+        pourcentage ← pcts[i]
+        profit_euro ← prix × pourcentage / 100
+        actions.AJOUTER((nom, prix, pourcentage, profit_euro))
+    FIN POUR
+    
+    // 2. TRI MULTI-CRITÈRES INTELLIGENT
+    // Critère 1: Pourcentage décroissant (-pourcentage)
+    // Critère 2: Prix croissant (prix) 
+    // Critère 3: Profit euro décroissant (-profit_euro)
+    TRIER actions PAR (-pourcentage, prix, -profit_euro)
+    
+    // 3. SÉLECTION GLOUTONNE
+    POUR chaque action(nom, prix, pourcentage, profit_euro) DANS actions:
+        
+        // Vérifier si on peut acheter cette action
+        SI prix ≤ budget_restant ALORS:
+            
+            // Sélectionner cette action
+            actions_selectionnees[nom] ← 1
+            cout_total ← cout_total + prix
+            profit_total ← profit_total + profit_euro
+            budget_restant ← budget_restant - prix
+            
+        FIN SI
+        
+    FIN POUR
+    
+    // 4. CONSTRUCTION DES RÉSULTATS
+    resume ← {"Total Profit": arrondir(profit_total, 2)}
+    cout ← {"Best cost": arrondir(cout_total, 2)}
+    RETOURNER (resume, actions_selectionnees, cout)
+
+FIN ALGORITHME
