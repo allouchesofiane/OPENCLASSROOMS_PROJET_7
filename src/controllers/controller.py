@@ -30,7 +30,7 @@ class Controller:
 
                 # prix : remplace virgule → point, supprime espaces/nbsp
                 price_txt = str(price_raw or "").strip().replace(",", ".").replace('€', '')
-                # pourcentage : enlève le symbole %, normalise virgule → point
+                # pourcentage : enlève le %, virgule → point
                 pct_txt   = str(pct_raw   or "").strip().replace("%", "").replace(" ", "").replace(",", ".")
 
                 # validation
@@ -41,7 +41,7 @@ class Controller:
                 price = float(price_txt)
                 pct   = float(pct_txt)
 
-                # filtres
+                # filtres et traiter les valeurs negatives 
                 if price <= 0 or pct <= 0:
                     continue
                 if price > self.budget:
@@ -58,7 +58,7 @@ class Controller:
         start = time.time()
         if self.algo == "brute":
             solver = BruteForce(names, prices, pcts, self.budget)
-        else:  # "greedy"
+        else:  
             solver = Optimized(names, prices, pcts, self.budget)
         result = solver.solve()
         execution_time = time.time() - start

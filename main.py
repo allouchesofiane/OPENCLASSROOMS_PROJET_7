@@ -1,4 +1,4 @@
- import argparse
+import argparse
 from src.controllers.controller import Controller
 from src.views.view import View
 
